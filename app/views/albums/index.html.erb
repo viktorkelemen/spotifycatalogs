@@ -1,0 +1,18 @@
+<h1>Listing albums</h1>
+
+<table>
+  <tr>
+    <th>Title</th>
+    <th>Artist</th>
+    <th>Spotify url</th>
+  </tr>
+
+  <% @albums.each do |album| %>
+    <tr>
+      <td><%= album.title %></td>
+      <td><%= album.artist %></td>
+      <td>,<%= album.spotify_url %></td>
+      <td><%= image_tag(album.cover_url || "default_album.png", size: "32") %></td>
+    </tr>
+  <% end %>
+</table>

@@ -1,0 +1,103 @@
+require 'hallon'
+require 'pry'
+require 'nokogiri'
+require 'open-uri'
+
+namespace :data do
+
+  desc "Fetch RA latest reviews"
+  task ra: :environment do
+
+    # Kill main thread if any other thread dies.
+    Thread.abort_on_exception = true
+
+    # Init Spotify
+    appkey_path = File.expand_path('./spotify_appkey.key')
+    unless File.exists?(appkey_path)
+      abort <<-ERROR
+        Your Spotify application key could not be found at the path:
+          #{appkey_path}
+
+        You may download your application key from:
+          https://developer.spotify.com/en/libspotify/application-key/
+      ERROR
+    end
+
+    hallon_username = ENV.fetch("SPOTIFY_USERNAME") { prompt("Please enter your spotify username") }
+    hallon_password = ENV.fetch("SPOTIFY_PASSWORD") { prompt("Please enter your spotify password", hide: true) }
+    hallon_appkey = IO.read(appkey_path)
+
+    if hallon_username.empty? or hallon_password.empty?
+      abort <<-ERROR
+        Sorry, you must supply both username and password for Hallon to be able to log in.
+      ERROR
+    end
+
+    session = Hallon::Session.initialize(hallon_appkey) do
+      on(:connection_error) do |error|
+        puts "[LOG] Connection error"
+        Hallon::Error.maybe_raise(error)
+      end
+
+      on(:offline_error) do |error|
+        puts "[LOG] Offline error"
+      end
+
+      on(:logged_out) do
+        abort "[FAIL] Logged out!"
+      end
+    end
+    session.login!(hallon_username, hallon_password)
+    puts "Successfully logged in!"
+
+    url = 'http://www.residentadvisor.net/reviews.aspx?format=album&yr=2013&mn=5'
+    doc = Nokogiri::HTML(open(url))
+
+    result = []
+
+    doc.xpath('//a[@class="music" and contains(@href,"/review-view")]').each do |link|
+      artist, album = link.text.split(' - ')
+      if artist && album
+        artist = artist.strip
+        album = album.strip
+        result.push "artist:\"#{ artist }\" album:\"#{ album }\""
+      end
+    end
+
+    session = Hallon::Session.instance
+
+    ## Search for music
+    result.each do |query|
+      search = Hallon::Search.new(query)
+
+      puts query
+      search.load
+
+      album = search.albums.first
+      params = {}
+      if album
+
+        json = JSON.parse(open("https://embed.spotify.com/oembed/?url=#{ album.to_str }").read)
+        thumbnail = json["thumbnail_url"].sub('/cover/','/300/')
+        params = {
+          spotify_url: album.to_str,
+          title: album.name,
+          artist: album.artist.name,
+          image: thumbnail
+        }
+
+        puts params
+        Album.new(params).save! unless Album.exists?(params)
+      end
+      #unless search.tracks.size.zero?
+
+        #search.tracks.each do |track|
+          #puts track
+        #end
+      #end
+
+      #sleep 1
+    end
+
+  end
+end

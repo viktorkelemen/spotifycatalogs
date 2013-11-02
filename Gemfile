@@ -45,3 +45,12 @@ end
 
 # Use debugger
 # gem 'debugger', group: [:development, :test]
+
+
+gem 'hallon-openal', '~> 1.0.1'
+gem 'ruby_parser', '>= 3.0.0.a1', '< 4.0'
+gem 'pry'
+gem 'simplecov'
+gem 'yard'
+gem 'maruku'
+gem 'nokogiri'

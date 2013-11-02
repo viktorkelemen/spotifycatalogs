@@ -11,6 +11,14 @@
 
   .album {
     padding-bottom: 1.3em;
+    float: left;
+    margin-left: 10px;
+    width: 256px;
+
+
+    &:nth-child(3n+1) {
+      margin-left: 0;
+    }
 
     .album_container {
       width: 256px;
@@ -28,16 +36,17 @@
       position: absolute;
       top: 0px;
       left: 0px;
-      background: #000;
-      opacity: 0.8;
-      color: #fff;
+      background: #fff;
+      opacity: 0.96;
+      color: #000;
       width: 100%;
-      height: 60px;
     }
     .title {
+      margin-bottom: 5px;
     }
 
     .artist {
+      font-size: 80%;
     }
   }
 }

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131022151907) do
+ActiveRecord::Schema.define(version: 20131102210629) do
 
   create_table "albums", force: true do |t|
     t.string   "title"
@@ -19,7 +19,7 @@ ActiveRecord::Schema.define(version: 20131022151907) do
     t.text     "spotify_url"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "cover_url"
+    t.string   "image"
   end
 
 end

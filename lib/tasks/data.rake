@@ -3,6 +3,51 @@ require 'pry'
 require 'nokogiri'
 require 'open-uri'
 
+
+def fetch(date)
+  url = "http://www.residentadvisor.net/reviews.aspx?format=album&yr=#{ date.year }&mn=#{ date.month }"
+  doc = Nokogiri::HTML(open(url))
+
+  result = []
+
+  doc.xpath('//a[@class="music" and contains(@href,"/review-view")]').each do |link|
+    artist, album = link.text.split(' - ')
+    if artist && album
+      artist = artist.strip
+      album = album.strip
+      result.push "artist:\"#{ artist }\" album:\"#{ album }\""
+    end
+  end
+
+  result.each do |query|
+    search = Hallon::Search.new(query)
+
+    puts query
+    search.load
+
+    album = search.albums.first
+    params = {}
+    if album
+
+      json = JSON.parse(open("https://embed.spotify.com/oembed/?url=#{ album.to_str }").read)
+      thumbnail = json["thumbnail_url"].sub('/cover/','/300/')
+      params = {
+        spotify_url: album.to_str,
+        title: album.name,
+        artist: album.artist.name,
+        image: thumbnail,
+        date: date
+      }
+
+      unless Album.exists?({ title: params[:title], artist: params[:artist] })
+        Album.new(params).save!
+        puts params
+      end
+    end
+  end
+end
+
+
 namespace :data do
 
   desc "Fetch RA latest reviews"
@@ -50,54 +95,8 @@ namespace :data do
     session.login!(hallon_username, hallon_password)
     puts "Successfully logged in!"
 
-    url = 'http://www.residentadvisor.net/reviews.aspx?format=album&yr=2013&mn=5'
-    doc = Nokogiri::HTML(open(url))
-
-    result = []
-
-    doc.xpath('//a[@class="music" and contains(@href,"/review-view")]').each do |link|
-      artist, album = link.text.split(' - ')
-      if artist && album
-        artist = artist.strip
-        album = album.strip
-        result.push "artist:\"#{ artist }\" album:\"#{ album }\""
-      end
-    end
-
-    session = Hallon::Session.instance
-
-    ## Search for music
-    result.each do |query|
-      search = Hallon::Search.new(query)
-
-      puts query
-      search.load
-
-      album = search.albums.first
-      params = {}
-      if album
-
-        json = JSON.parse(open("https://embed.spotify.com/oembed/?url=#{ album.to_str }").read)
-        thumbnail = json["thumbnail_url"].sub('/cover/','/300/')
-        params = {
-          spotify_url: album.to_str,
-          title: album.name,
-          artist: album.artist.name,
-          image: thumbnail
-        }
-
-        puts params
-        Album.new(params).save! unless Album.exists?(params)
-      end
-      #unless search.tracks.size.zero?
-
-        #search.tracks.each do |track|
-          #puts track
-        #end
-      #end
-
-      #sleep 1
-    end
+    fetch(Date.new(2013,9))
+    fetch(Date.new(2013,10))
 
   end
 end

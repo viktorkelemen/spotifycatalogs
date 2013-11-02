@@ -14,7 +14,7 @@ class AlbumsController < ApplicationController
   end
 
   def index
-    @albums = Album.all
+    @albums = Album.all.group_by &:date
   end
 
   private

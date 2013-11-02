@@ -3,17 +3,23 @@
   <img src="/assets/ra.png" width=87 height=37>
 </header>
 
-<div class="albums clearfix">
+<div class="review_container">
 
-  <% @albums.each do |album| %>
-  <div class="album">
-    <%= link_to album.spotify_url, class: 'album_container' do %>
-      <div class="info">
-        <div class="title"><%= album.title %></div>
-        <div class="artist"><%= album.artist %></div>
-      </div>
-      <%= image_tag(album.image || "default_album.png", size: "256", class: "album_cover") %>
+  <% @albums.each do |date, releases| %>
+    <div class="review_date"><%= date.strftime('%Y %B') %></div>
+    <div class="albums clearfix">
+    <% releases.each do |album| %>
+    <div class="album">
+      <%= link_to album.spotify_url, class: 'album_container' do %>
+        <div class="info">
+          <div class="title"><%= album.title %></div>
+          <div class="artist"><%= album.artist %></div>
+        </div>
+        <%= image_tag(album.image || "default_album.png", size: "256", class: "album_cover") %>
+      <% end %>
+    </div>
     <% end %>
-  </div>
+    </div>
+
   <% end %>
 </div>

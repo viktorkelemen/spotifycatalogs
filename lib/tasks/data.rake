@@ -95,13 +95,11 @@ namespace :data do
     session.login!(hallon_username, hallon_password)
     puts "Successfully logged in!"
 
-    fetch(Date.new(2013,4))
-    fetch(Date.new(2013,5))
-    fetch(Date.new(2013,6))
-    fetch(Date.new(2013,7))
-    fetch(Date.new(2013,8))
-    fetch(Date.new(2013,9))
-    fetch(Date.new(2013,10))
+    year = ENV.fetch("YEAR")
+    month = ENV.fetch("MONTH")
+    if year && month
+      fetch(Date.new(year.to_i,month.to_i))
+    end
 
   end
 end

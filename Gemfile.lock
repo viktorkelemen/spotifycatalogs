@@ -62,6 +62,7 @@ GEM
     mime-types (1.25)
     minitest (4.7.5)
     multi_json (1.8.2)
+    newrelic_rpm (3.6.8.168)
     nokogiri (1.5.10)
     pg (0.17.0)
     polyglot (0.3.3)
@@ -150,6 +151,7 @@ DEPENDENCIES
   jbuilder (~> 1.2)
   jquery-rails
   maruku
+  newrelic_rpm
   nokogiri
   pg
   pry

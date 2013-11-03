@@ -57,13 +57,12 @@ GEM
     minitest (4.7.5)
     multi_json (1.8.2)
     nokogiri (1.5.10)
+    pg (0.17.0)
     polyglot (0.3.3)
     pry (0.9.12.2)
       coderay (~> 1.0.5)
       method_source (~> 0.8)
       slop (~> 3.4)
-    purecss (0.3.0)
-      rails (>= 3.1)
     rack (1.5.2)
     rack-test (0.6.2)
       rack (>= 1.0)
@@ -134,8 +133,8 @@ DEPENDENCIES
   jquery-rails
   maruku
   nokogiri
+  pg
   pry
-  purecss
   rails (= 4.0.0)
   ruby_parser (>= 3.0.0.a1, < 4.0)
   sass-rails (~> 4.0.0)

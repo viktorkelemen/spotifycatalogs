@@ -1,25 +1,21 @@
-<header>
-  <img src="/assets/spotify.png" width=37 height=37>
-  <img src="/assets/ra.png" width=87 height=37>
-</header>
-
-<div class="review_container">
-
-  <% @albums.each do |date, releases| %>
-    <div class="review_date"><%= date.strftime('%Y %B') %></div>
-    <div class="albums clearfix">
-    <% releases.each do |album| %>
-    <div class="album">
-      <%= link_to album.spotify_url, class: 'album_container' do %>
-        <div class="info">
-          <div class="title"><%= album.title %></div>
-          <div class="artist"><%= album.artist %></div>
-        </div>
-        <%= image_tag(album.image || "default_album.png", size: "256", class: "album_cover") %>
-      <% end %>
-    </div>
-    <% end %>
-    </div>
-
-  <% end %>
+<%= image_tag('ra.jpg', size: '300', class: 'box') %>
+<%= image_tag('spotify.jpg', size: '300', class: 'box') %>
+<div class="box">
+  <p class="intro">Resident Advisor reviewed albums with Spotify link. Updated monthly.</p>
 </div>
+
+<% @albums.each do |date, releases| %>
+  <div class="review_date box"><%= date.strftime('%Y %b') %></div>
+  <% releases.each do |album| %>
+  <div class="album box clickable_box">
+    <%= link_to album.spotify_url, class: 'album_container' do %>
+      <div class="info">
+        <div class="title"><%= album.title %></div>
+        <div class="artist"><%= album.artist %></div>
+      </div>
+      <%= image_tag(album.image || "default_album.png", size: "300", class: "album_cover") %>
+    <% end %>
+  </div>
+  <% end %>
+
+<% end %>

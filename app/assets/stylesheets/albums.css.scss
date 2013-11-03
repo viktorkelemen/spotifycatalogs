@@ -1,65 +1,37 @@
-// Place all the styles related to the albums controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+.review_date {
+  font-size: 100px;
+  padding: 5px;
+}
 
+.album {
 
-.review_container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 0 2em;
-  margin-bottom: 50px;
-
-  .review_date {
+  .album_container {
+    width: 300px;
+    height: 300px;
     display: block;
-    color: #000;
-    background: #fff;
-    margin: 10px 0;
-    padding: 5px;
-    clear: left;
+    position: relative;
+  }
+
+  .cover {
+  }
+
+  .info {
     box-sizing:border-box;
+    padding: 5px;
+    margin-bottom: 10px;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    background: #fff;
+    opacity: 0.96;
+    color: #000;
+    width: 100%;
+  }
+  .title {
+    margin-bottom: 5px;
   }
 
-  .albums {
-    margin-bottom: 30px;
-  }
-  .album {
-    padding-bottom: 1.3em;
-    float: left;
-    margin-left: 16px;
-    width: 256px;
-
-
-    &:nth-child(3n+1) {
-      margin-left: 0;
-    }
-
-    .album_container {
-      width: 256px;
-      height: 256px;
-      display: block;
-      position: relative;
-    }
-
-    .cover {
-    }
-
-    .info {
-      box-sizing:border-box;
-      padding: 5px;
-      position: absolute;
-      bottom: 0px;
-      left: 0px;
-      background: #fff;
-      opacity: 0.96;
-      color: #000;
-      width: 100%;
-    }
-    .title {
-      margin-bottom: 5px;
-    }
-
-    .artist {
-      font-size: 80%;
-    }
+  .artist {
+    font-size: 80%;
   }
 }

@@ -6,6 +6,13 @@ require 'open-uri'
 
 def fetch(date)
   url = "http://www.residentadvisor.net/reviews.aspx?format=album&yr=#{ date.year }&mn=#{ date.month }"
+
+  catalog = Catalog.find_by_title('residentadvisor')
+  unless catalog
+    catalog = Catalog.new({ title: 'residentadvisor', url: 'http://www.residentadvisor.net' })
+    catalog.save!
+  end
+
   doc = Nokogiri::HTML(open(url))
 
   result = []
@@ -40,7 +47,7 @@ def fetch(date)
       }
 
       unless Album.exists?({ title: params[:title], artist: params[:artist] })
-        Album.new(params).save!
+        catalog.albums.create(params)
         puts params
       end
     end

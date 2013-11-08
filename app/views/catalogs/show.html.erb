@@ -1,10 +1,9 @@
-<%= image_tag('ra.jpg', size: '300', class: 'box') %>
-<%= image_tag('spotify.jpg', size: '300', class: 'box') %>
+<%= image_tag @catalog.image, size: 300, class: 'box' %>
 <div class="box">
-  <p class="intro">Resident Advisor reviewed albums with Spotify link. Updated monthly.</p>
+  <p class="intro"><%= @catalog.description %></p>
 </div>
 
-<% @albums.each do |date, releases| %>
+<% @sorted_albums.each do |date, releases| %>
   <div class="review_date box"><%= date.strftime('%Y %b') %></div>
   <% releases.each do |album| %>
   <div class="album box clickable_box">

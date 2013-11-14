@@ -4,7 +4,7 @@ require 'nokogiri'
 require 'open-uri'
 
 
-def fetch(result, date, catalog_title)
+def fetch(result, catalog_title, date = nil)
 
   catalog = Catalog.find_by_title(catalog_title)
   unless catalog
@@ -32,9 +32,11 @@ def fetch(result, date, catalog_title)
         spotify_url: album.to_str,
         title: album.name,
         artist: album.artist.name,
-        image: thumbnail,
-        date: date
+        image: thumbnail
       }
+      if date
+        params[:date] = date
+      end
 
       unless Album.exists?({ title: params[:title], artist: params[:artist] })
         catalog.albums.create(params)
@@ -59,11 +61,11 @@ def fetch_ra(date)
     end
   end
 
-  fetch(result, date, 'residentadvisor')
+  fetch(result, 'residentadvisor', date)
 end
 
 
-def fetch_textura()
+def fetch_textura
   url = 'http://textura.org/pages/reviews.htm'
   doc = Nokogiri::HTML(open(url))
   result = []
@@ -80,8 +82,26 @@ def fetch_textura()
     end
   end
 
-  fetch(result, date, 'textura')
+  fetch(result, 'textura', date)
 end
+
+def fetch_experimedia
+  url = 'http://experimedia.net/index.php?main_page=featured_products'
+  doc = Nokogiri::HTML(open(url))
+  result = []
+
+  doc.css('#featuredDefault table td.main strong').each do |line|
+    artist, album = line.text.gsub(/\(.*?\)/, "").split(' - ')
+    album = album.strip
+    artist = artist.strip
+    if artist && album
+      result.push "artist:\"#{ artist }\" album:\"#{ album }\""
+    end
+  end
+
+  fetch(result, 'experimedia')
+end
+
 
 def login
   # Kill main thread if any other thread dies.
@@ -141,6 +161,11 @@ namespace :data do
 
   task textura: :environment do
     login
-    fetch_textura()
+    fetch_textura
+  end
+
+  task experimedia: :environment do
+    login
+    fetch_experimedia
   end
 end

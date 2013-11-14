@@ -4,7 +4,9 @@
 </div>
 
 <% @sorted_albums.each do |date, releases| %>
-  <div class="review_date box"><%= date.strftime('%Y %b') %></div>
+  <% if date %>
+    <div class="review_date box"><%= date.strftime('%Y %b') %></div>
+  <% end %>
   <% releases.each do |album| %>
   <div class="album box clickable_box">
     <%= link_to album.spotify_url, class: 'album_container' do %>

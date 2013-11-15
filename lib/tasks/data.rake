@@ -85,7 +85,7 @@ def fetch_textura
   fetch(result, 'textura', date)
 end
 
-def fetch_experimedia
+def fetch_experimedia_featured
   url = 'http://experimedia.net/index.php?main_page=featured_products'
   doc = Nokogiri::HTML(open(url))
   result = []
@@ -99,7 +99,27 @@ def fetch_experimedia
     end
   end
 
-  fetch(result, 'experimedia')
+  fetch(result, 'experimedia_featured')
+end
+
+def fetch_experimedia_new
+  result = []
+
+  [1,2,3,4,5,6,7,8,9,10].each do |page|
+    url = "http://experimedia.net/index.php?main_page=products_new&disp_order=6&page=#{ page }"
+    doc = Nokogiri::HTML(open(url))
+
+    doc.css('#newProductsDefault table td.main strong').each do |line|
+      artist, album = line.text.gsub(/\(.*?\)/, "").split(' - ')
+      album = album.strip
+      artist = artist.strip
+      if artist && album
+        result.push "artist:\"#{ artist }\" album:\"#{ album }\""
+      end
+    end
+  end
+
+  fetch(result, 'experimedia_new')
 end
 
 
@@ -164,8 +184,13 @@ namespace :data do
     fetch_textura
   end
 
-  task experimedia: :environment do
+  task experimedia_featured: :environment do
     login
-    fetch_experimedia
+    fetch_experimedia_featured
+  end
+
+  task experimedia_new: :environment do
+    login
+    fetch_experimedia_new
   end
 end

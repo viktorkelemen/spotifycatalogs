@@ -51,6 +51,7 @@ gem 'yard'
 gem 'maruku'
 gem 'nokogiri'
 
+gem 'mojinizer'
 
 group :production do
   gem 'newrelic_rpm'

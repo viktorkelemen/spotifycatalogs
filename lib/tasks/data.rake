@@ -2,13 +2,14 @@ require 'hallon'
 require 'pry'
 require 'nokogiri'
 require 'open-uri'
+require 'mojinizer'
 
 
-def fetch(result, catalog_title, date = nil)
+def fetch(result, catalog_name, date = nil)
 
-  catalog = Catalog.find_by_title(catalog_title)
+  catalog = Catalog.find_by_name(catalog_name)
   unless catalog
-    catalog = Catalog.new({ title: catalog_title })
+    catalog = Catalog.new({ name: catalog_name })
     catalog.save!
   end
 
@@ -122,6 +123,29 @@ def fetch_experimedia_new
   fetch(result, 'experimedia_new')
 end
 
+def fetch_ameto_day
+  url = 'http://shop.ameto.biz/?mode=cate&cbid=511547&csid=0&sort=n'
+  doc = Nokogiri::HTML(open(url))
+  result = []
+
+  doc.css('.itemarea a').each do |line|
+    unless line.text.empty?
+      artist, album = line.text.split(' / ')
+      if artist && album
+        unless artist.contains_kanji? || album.contains_kanji?
+          album = album.sub(/(?<=\[).+?(?=\])/, "").gsub('[]','').strip
+          artist = artist.strip
+          album = album.romaji if album.contains_kana?
+          artist = artist.romaji if artist.contains_kana?
+          result.push "artist:\"#{ artist }\" album:\"#{ album }\""
+        end
+      end
+    end
+  end
+
+  fetch(result, 'ameto_day')
+end
+
 
 def login
   # Kill main thread if any other thread dies.
@@ -192,5 +216,10 @@ namespace :data do
   task experimedia_new: :environment do
     login
     fetch_experimedia_new
+  end
+
+  task ameto_day: :environment do
+    login
+    fetch_ameto_day
   end
 end

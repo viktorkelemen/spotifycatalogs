@@ -61,6 +61,9 @@ GEM
     method_source (0.8.2)
     mime-types (1.25)
     minitest (4.7.5)
+    moji (1.6)
+    mojinizer (0.2.2)
+      moji (~> 1.6)
     multi_json (1.8.2)
     newrelic_rpm (3.6.8.168)
     nokogiri (1.5.10)
@@ -151,6 +154,7 @@ DEPENDENCIES
   jbuilder (~> 1.2)
   jquery-rails
   maruku
+  mojinizer
   newrelic_rpm
   nokogiri
   pg

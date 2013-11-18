@@ -5,7 +5,7 @@ class CatalogsController < ApplicationController
   end
 
   def show
-    @catalog = Catalog.find_by_title(params[:title])
+    @catalog = Catalog.find_by_name(params[:name])
     @sorted_albums = @catalog.albums.group_by &:date
   end
 

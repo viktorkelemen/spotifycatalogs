@@ -1,7 +1,8 @@
+<% content_for :title, 'Catalogs' %>
 <%= image_tag('spotify.jpg', size: 300, class: 'box') %>
 <% @catalogs.each do |catalog| %>
   <div class="box">
-    <%= link_to "/catalogs/#{ catalog.title }" do %>
+    <%= link_to "/catalogs/#{ catalog.name }" do %>
       <%= image_tag catalog.image, size: 300, class: 'box' %>
     <% end %>
   </div>

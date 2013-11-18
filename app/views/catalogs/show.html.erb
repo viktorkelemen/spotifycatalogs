@@ -1,3 +1,5 @@
+<% content_for :title, "#{ @catalog.title } + Spotify" %>
+
 <%= image_tag @catalog.image, size: 300, class: 'box' %>
 <div class="box">
   <p class="intro"><%= @catalog.description %></p>

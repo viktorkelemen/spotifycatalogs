@@ -1,6 +1,6 @@
 SpoturaWeb::Application.routes.draw do
 
-  get 'catalogs/:title', to: 'catalogs#show'
+  get 'catalogs/:name', to: 'catalogs#show'
 
   root 'catalogs#index'
 

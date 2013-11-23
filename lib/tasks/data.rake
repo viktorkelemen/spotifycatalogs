@@ -123,8 +123,8 @@ def fetch_experimedia_new
   fetch(result, 'experimedia_new')
 end
 
-def fetch_ameto_day
-  url = 'http://shop.ameto.biz/?mode=cate&cbid=511547&csid=0&sort=n'
+
+def get_ameto(url)
   doc = Nokogiri::HTML(open(url))
   result = []
 
@@ -143,8 +143,18 @@ def fetch_ameto_day
     end
   end
 
+  result
+end
+
+def fetch_ameto
+  result = []
+  result += get_ameto('http://shop.ameto.biz/?mode=cate&cbid=511547&csid=0&sort=n')
+  result += get_ameto('http://shop.ameto.biz/?mode=cate&cbid=511546&csid=0&sort=n')
+  result += get_ameto('http://shop.ameto.biz/?mode=cate&cbid=511549&csid=0&sort=n')
+
   fetch(result, 'ameto_day')
 end
+
 
 
 def login
@@ -218,8 +228,8 @@ namespace :data do
     fetch_experimedia_new
   end
 
-  task ameto_day: :environment do
+  task ameto: :environment do
     login
-    fetch_ameto_day
+    fetch_ameto
   end
 end

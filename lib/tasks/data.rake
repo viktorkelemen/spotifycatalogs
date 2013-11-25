@@ -155,6 +155,30 @@ def fetch_ameto
   fetch(result, 'ameto_day')
 end
 
+def fetch_discogs_goa
+  url = 'http://www.discogs.com/explore?sort=year_desc&style=Goa+Trance&decade=2010&decade=now'
+  doc = Nokogiri::HTML(open(url))
+  result = []
+
+  doc.css('.itemarea a').each do |line|
+    unless line.text.empty?
+      artist, album = line.text.split(' / ')
+      if artist && album
+        unless artist.contains_kanji? || album.contains_kanji?
+          album = album.sub(/(?<=\[).+?(?=\])/, "").gsub('[]','').strip
+          artist = artist.strip
+          album = album.romaji if album.contains_kana?
+          artist = artist.romaji if artist.contains_kana?
+          result.push "artist:\"#{ artist }\" album:\"#{ album }\""
+        end
+      end
+    end
+  end
+
+  puts result
+
+end
+
 
 
 def login
@@ -231,5 +255,9 @@ namespace :data do
   task ameto: :environment do
     login
     fetch_ameto
+  end
+
+  task discogs_goa: :environment do
+    fetch_discogs_goa
   end
 end

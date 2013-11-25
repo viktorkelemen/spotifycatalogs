@@ -53,6 +53,8 @@ gem 'nokogiri'
 
 gem 'mojinizer'
 
+gem 'discogs-wrapper'
+
 group :production do
   gem 'newrelic_rpm'
   gem 'pg'

@@ -1,13 +1,13 @@
 <% content_for :title, "#{ @catalog.title } + Spotify" %>
 
-<%= image_tag @catalog.image, size: 300, class: 'box' %>
-<div class="box">
+<%= image_tag @catalog.image, size: 300, class: 'box info' %>
+<div class="box info">
   <p class="intro"><%= @catalog.description %></p>
 </div>
 
 <% @sorted_albums.each do |date, releases| %>
   <% if date %>
-    <div class="review_date box"><%= date.strftime('%Y %b') %></div>
+    <div class="review_date box info padded"><%= date.strftime('%Y %b') %></div>
   <% end %>
   <% releases.each do |album| %>
   <div class="album box clickable_box">

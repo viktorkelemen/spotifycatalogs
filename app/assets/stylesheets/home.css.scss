@@ -25,7 +25,16 @@ body {
   float: left;
   display: block;
   overflow: hidden;
+
+  &.padded {
+    padding: 20px;
+  }
+
+  &.info {
+    border: 10px solid #000;
+  }
 }
+
 .intro {
   font-size: 24px;
   padding: 5px;

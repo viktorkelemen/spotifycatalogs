@@ -27,7 +27,7 @@ body {
   overflow: hidden;
 
   &.padded {
-    padding: 20px;
+    padding: 10px;
   }
 }
 
@@ -41,6 +41,15 @@ body {
 a, img {
   text-decoration: none;
   border: 0;
+}
+
+a {
+  color: #000;
+  font-weight: bold;
+}
+
+.donate_button {
+  margin-top: 10px;
 }
 
 .clearfix:before,

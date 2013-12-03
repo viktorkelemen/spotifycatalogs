@@ -1,14 +1,8 @@
 <% content_for :title, "#{ @catalog.title } + Spotify" %>
 
 <%= image_tag @catalog.image, size: 300, class: 'box info' %>
-<div class="box info">
-  <p class="intro"><%= @catalog.description %></p>
-</div>
 
 <% @sorted_albums.each do |date, releases| %>
-  <% if date %>
-    <div class="review_date box info padded"><%= date.strftime('%Y %b') %></div>
-  <% end %>
   <% releases.each do |album| %>
   <div class="album box clickable_box">
     <%= link_to album.spotify_url, class: 'album_container' do %>
@@ -16,7 +10,8 @@
         <div class="title"><%= album.title %></div>
         <div class="artist"><%= album.artist %></div>
       </div>
-      <%= image_tag(album.image || "default_album.png", size: "300", class: "album_cover") %>
+      <%= image_tag(album.image || "default_album.png", size: "320", class: "album_cover") %>
+      <%= image_tag("play.png", width: "258", height: "258", class: "play_button") %>
     <% end %>
   </div>
   <% end %>

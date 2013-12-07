@@ -86,6 +86,26 @@ def fetch_textura
   fetch(result, 'textura', date)
 end
 
+def fetch_textura_top
+  url = 'http://textura.org/reviews/2013top10s.htm'
+  doc = Nokogiri::HTML(open(url))
+  result = []
+
+  doc.css('p.bodytext a[href*="../archives"]').each do |link|
+    artist = link.at_xpath('text()[1]')
+    album = link.at_xpath('em')
+    if artist && album
+      artist = artist.text.sub(/:\s*$/,'').strip
+      album = album.text.strip
+      result.push "artist:\"#{ artist }\" album:\"#{ album }\""
+    end
+  end
+
+  fetch(result, 'textura_top')
+end
+
+
+
 def fetch_experimedia_featured
   url = 'http://experimedia.net/index.php?main_page=featured_products'
   doc = Nokogiri::HTML(open(url))
@@ -180,6 +200,24 @@ def fetch_discogs_goa
 end
 
 
+def fetch_raster_noton
+  url = 'http://www.raster-noton.net/releases.php'
+  doc = Nokogiri::HTML(open(url))
+  result = []
+
+  doc.css('h3 a').each do |link|
+    code, artist, album = link.content.split(' | ')
+    if artist && album
+      artist = artist.sub(/:\s*$/,'').strip
+      album = album.strip
+      result.push "artist:\"#{ artist }\" album:\"#{ album }\""
+    end
+  end
+
+  fetch(result, 'rasternoton')
+end
+
+
 
 def login
   # Kill main thread if any other thread dies.
@@ -242,6 +280,11 @@ namespace :data do
     fetch_textura
   end
 
+  task textura_top: :environment do
+    login
+    fetch_textura_top
+  end
+
   task experimedia_featured: :environment do
     login
     fetch_experimedia_featured
@@ -260,4 +303,10 @@ namespace :data do
   task discogs_goa: :environment do
     fetch_discogs_goa
   end
+
+  task raster_noton: :environment do
+    login
+    fetch_raster_noton
+  end
+
 end

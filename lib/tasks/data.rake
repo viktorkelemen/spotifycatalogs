@@ -128,7 +128,7 @@ def fetch_experimedia_new
 
   [1,2,3,4,5,6,7,8,9,10].each do |page|
     url = "http://experimedia.net/index.php?main_page=products_new&disp_order=6&page=#{ page }"
-    doc = Nokogiri::HTML(open(url))
+      doc = Nokogiri::HTML(open(url))
 
     doc.css('#newProductsDefault table td.main strong').each do |line|
       artist, album = line.text.gsub(/\(.*?\)/, "").split(' - ')
@@ -215,6 +215,25 @@ def fetch_raster_noton
   end
 
   fetch(result, 'rasternoton')
+end
+
+def fetch_fact_best_albums_2013
+  url = "http://www.factmag.com/2013/12/09/the-50-best-albums-of-2013/"
+  doc = Nokogiri::HTML(open(url))
+  result = []
+
+  doc.css('#cml-column-right .page-52.dark-gray.hidden').each do |block|
+    target_p = block.css('p + p')
+    lines = target_p.first.content.split(/\n/)
+    lines.each do |line|
+      artist, album = line.sub('-','–').gsub(/\(.*?\)/, "").split(' – ')
+      artist = artist[4..-1]
+      album = album.strip
+      result.push "artist:\"#{ artist }\" album:\"#{ album }\""
+    end
+  end
+
+  fetch(result, 'fact_best_albums_2013')
 end
 
 
@@ -307,6 +326,11 @@ namespace :data do
   task raster_noton: :environment do
     login
     fetch_raster_noton
+  end
+
+  task fact_best_albums_2013: :environment do
+    login
+    fetch_fact_best_albums_2013
   end
 
 end

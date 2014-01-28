@@ -53,7 +53,7 @@ def fetch_ra(date)
   doc = Nokogiri::HTML(open(url))
 
   result = []
-  doc.xpath('//a[@class="music" and contains(@href,"/review-view")]').each do |link|
+  doc.css('.reviewArchive article h1').each do |link|
     artist, album = link.text.split(' - ')
     if artist && album
       artist = artist.strip

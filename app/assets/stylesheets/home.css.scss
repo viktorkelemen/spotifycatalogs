@@ -5,6 +5,7 @@
 body {
   background: #000;
   margin: 0;
+  margin-left: 1px;
 }
 
 .container {
@@ -18,7 +19,7 @@ body {
   width: 318px;
   height: 318px;
   background: #fff;
-  margin: 0 1px 1px 1px;
+  margin: 0 1px 1px 0px;
 
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -30,10 +31,13 @@ body {
   &.padded {
     padding: 10px;
   }
-}
 
-.box:nth-child(2) {
-  margin-left: 0;
+  &.icon {
+    text-align: center;
+    img {
+      margin-top: 10px;
+    }
+  }
 }
 
 .intro {

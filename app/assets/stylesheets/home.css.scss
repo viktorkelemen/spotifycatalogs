@@ -4,6 +4,7 @@
 
 body {
   background: #000;
+  margin: 0;
 }
 
 .container {
@@ -14,10 +15,10 @@ body {
 }
 
 .box {
-  width: 300px;
-  height: 300px;
+  width: 318px;
+  height: 318px;
   background: #fff;
-  margin: 0 10px 10px 0;
+  margin: 0 1px 1px 1px;
 
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -29,6 +30,10 @@ body {
   &.padded {
     padding: 10px;
   }
+}
+
+.box:nth-child(2) {
+  margin-left: 0;
 }
 
 .intro {

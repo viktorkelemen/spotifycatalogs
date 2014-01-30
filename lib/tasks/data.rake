@@ -236,6 +236,25 @@ def fetch_fact_best_albums_2013
   fetch(result, 'fact_best_albums_2013')
 end
 
+def fetch_inverted_audio
+  result = []
+
+  [1,2,3,4,5].each do |page|
+    url = "http://www.inverted-audio.com/category/review"
+    doc = Nokogiri::HTML(open("#{ url }/page/#{ page }"))
+
+    doc.css('#content .post_preview').each do |link|
+      artist, album = link['title'].split(': ')
+      if artist && album
+        artist = artist.sub(/:\s*$/,'').strip
+        album = album.strip
+        result.push "artist:\"#{ artist }\" album:\"#{ album }\""
+      end
+    end
+  end
+
+  fetch(result, 'inverted_audio')
+end
 
 
 def login
@@ -331,6 +350,11 @@ namespace :data do
   task fact_best_albums_2013: :environment do
     login
     fetch_fact_best_albums_2013
+  end
+
+  task fetch_inverted_audio: :environment do
+    login
+    fetch_inverted_audio
   end
 
 end

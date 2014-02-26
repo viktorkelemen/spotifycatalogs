@@ -23,7 +23,7 @@ def fetch(result, catalog_name, date = nil)
     params = {}
     if album
       begin
-        json =  JSON.parse(open("https://embed.spotify.com/oembed/?url=#{ album.to_str }").read)
+        json = JSON.parse(open("https://embed.spotify.com/oembed/?url=#{ album.to_str }", "User-Agent" => "Ruby/#{RUBY_VERSION}").read)
         thumbnail = json["thumbnail_url"].sub('/cover/','/300/')
       rescue
         thumbnail = ''

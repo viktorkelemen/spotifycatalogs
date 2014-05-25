@@ -4,8 +4,7 @@
   <%= image_tag "#{ @catalog.image }.jpg" %>
 </div>
 
-<% @sorted_albums.each do |date, releases| %>
-  <% releases.each do |album| %>
+<% @catalog.albums.each do |album| %>
   <div class="album box">
     <%= link_to album.spotify_url, class: 'album_container' do %>
       <div class="info">
@@ -16,6 +15,4 @@
       <%= image_tag("play.png", width: "258", height: "258", class: "play_button") %>
     <% end %>
   </div>
-  <% end %>
-
 <% end %>

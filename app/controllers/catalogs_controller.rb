@@ -6,7 +6,6 @@ class CatalogsController < ApplicationController
 
   def show
     @catalog = Catalog.find_by_name(params[:name])
-    @sorted_albums = @catalog.albums.group_by &:date
   end
 
 end

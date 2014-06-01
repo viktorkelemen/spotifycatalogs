@@ -5,7 +5,7 @@ require 'open-uri'
 require 'mojinizer'
 
 
-def fetch(result, catalog_name, date = nil)
+def fetch(result, catalog_name)
 
   catalog = Catalog.find_by_name(catalog_name)
   unless catalog
@@ -35,9 +35,6 @@ def fetch(result, catalog_name, date = nil)
         artist: album.artist.name,
         image: thumbnail
       }
-      if date
-        params[:date] = date
-      end
 
       unless Album.exists?({ title: params[:title], artist: params[:artist] })
         catalog.albums.create(params)
@@ -62,7 +59,7 @@ def fetch_ra(date)
     end
   end
 
-  fetch(result, 'residentadvisor', date)
+  fetch(result, 'residentadvisor')
 end
 
 
@@ -70,8 +67,6 @@ def fetch_textura
   url = 'http://textura.org/pages/reviews.htm'
   doc = Nokogiri::HTML(open(url))
   result = []
-
-  date = DateTime.parse(doc.xpath("//p[@class='style9'][1]").text)
 
   doc.xpath('//a[contains(@href,"../")]').each do |link|
     artist = link.at_xpath('text()[1]')
@@ -83,7 +78,7 @@ def fetch_textura
     end
   end
 
-  fetch(result, 'textura', date)
+  fetch(result, 'textura')
 end
 
 def fetch_textura_top

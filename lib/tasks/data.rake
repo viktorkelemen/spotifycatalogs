@@ -156,6 +156,23 @@ def fetch_igloo
   fetch(result, 'igloomag')
 end
 
+def fetch_ambientexotica
+  url = "http://www.ambientexotica.com/ambient-reviews"
+
+  doc = Nokogiri::HTML(open(url))
+
+  result = []
+  doc.css('#content h4 a').each do |link|
+    artist, album = link.text.split(' – ')
+    if artist && album
+      artist = artist.strip
+      album = album.gsub(/\([^)]+\)/, "").gsub(/\A\p{Space}*|\p{Space}*\z/, '')
+      result.push "artist:\"#{ artist }\" album:\"#{ album }\""
+    end
+  end
+
+  fetch(result, 'ambientexotica')
+end
 
 def get_ameto(url)
   doc = Nokogiri::HTML(open(url))
@@ -372,6 +389,11 @@ namespace :data do
   task igloo: :environment do
     login
     fetch_igloo
+  end
+
+  task ambientexotica: :environment do
+    login
+    fetch_ambientexotica
   end
 
 end

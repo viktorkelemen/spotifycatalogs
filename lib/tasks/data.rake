@@ -138,6 +138,24 @@ def fetch_experimedia_new
   fetch(result, 'experimedia_new')
 end
 
+def fetch_igloo
+  url = "http://igloomag.com/category/reviews"
+
+  doc = Nokogiri::HTML(open(url))
+
+  result = []
+  doc.css('#content .post h2 a').each do |link|
+    artist, album = link.text.split(' :: ')
+    if artist && album
+      artist = artist.strip
+      album = album.gsub(/\([^)]+\)/, "").strip
+      result.push "artist:\"#{ artist }\" album:\"#{ album }\""
+    end
+  end
+
+  fetch(result, 'igloomag')
+end
+
 
 def get_ameto(url)
   doc = Nokogiri::HTML(open(url))
@@ -349,6 +367,11 @@ namespace :data do
     login
     page = ENV.fetch("PAGE")
     fetch_inverted_audio(page || 1)
+  end
+
+  task igloo: :environment do
+    login
+    fetch_igloo
   end
 
 end

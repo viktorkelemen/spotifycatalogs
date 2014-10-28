@@ -4,7 +4,7 @@
   <%= image_tag "#{ @catalog.image }.jpg" %>
 </div>
 
-<% @catalog.albums.each do |album| %>
+<% @catalog.albums.first(100).each do |album| %>
   <div class="album box">
     <%= link_to album.spotify_url, class: 'album_container' do %>
       <div class="info">

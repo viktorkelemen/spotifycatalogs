@@ -174,6 +174,26 @@ def fetch_ambientexotica
   fetch(result, 'ambientexotica')
 end
 
+def fetch_xlr8r
+  url = "http://www.xlr8r.com/reviews/recent?page=0"
+
+  doc = Nokogiri::HTML(open(url))
+
+  result = []
+  doc.css('#reviews_page .posts-list .post .title a').each do |post|
+    artist = post.at_xpath('text()[1]')
+    album = post.at_xpath('em')
+    if artist && album
+      artist = artist.text.sub(/:\s*$/,'').strip
+      album = album.text.strip
+      result.push "artist:\"#{ artist }\" album:\"#{ album }\""
+    end
+  end
+
+  fetch(result, 'xlr8r')
+end
+
+
 def get_ameto(url)
   doc = Nokogiri::HTML(open(url))
   result = []
@@ -375,12 +395,12 @@ namespace :data do
     fetch_raster_noton
   end
 
-  task fact_best_albums_2013: :environment do
+  task best_albums_2013: :environment do
     login
     fetch_fact_best_albums_2013
   end
 
-  task fetch_inverted_audio: :environment do
+  task inverted_audio: :environment do
     login
     page = ENV.fetch("PAGE")
     fetch_inverted_audio(page || 1)
@@ -394,6 +414,11 @@ namespace :data do
   task ambientexotica: :environment do
     login
     fetch_ambientexotica
+  end
+
+  task xlr8r: :environment do
+    login
+    fetch_xlr8r
   end
 
 end

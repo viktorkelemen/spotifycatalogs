@@ -175,18 +175,21 @@ def fetch_ambientexotica
 end
 
 def fetch_xlr8r
-  url = "http://www.xlr8r.com/reviews/recent?page=0"
-
-  doc = Nokogiri::HTML(open(url))
 
   result = []
-  doc.css('#reviews_page .posts-list .post .title a').each do |post|
-    artist = post.at_xpath('text()[1]')
-    album = post.at_xpath('em')
-    if artist && album
-      artist = artist.text.sub(/:\s*$/,'').strip
-      album = album.text.strip
-      result.push "artist:\"#{ artist }\" album:\"#{ album }\""
+
+  (0..3).each do |page|
+    url = "http://www.xlr8r.com/reviews/recent?page=#{ page }"
+    doc = Nokogiri::HTML(open(url))
+
+    doc.css('#reviews_page .posts-list .post .title a').each do |post|
+      artist = post.at_xpath('text()[1]')
+      album = post.at_xpath('em')
+      if artist && album
+        artist = artist.text.sub(/:\s*$/,'').strip
+        album = album.text.strip
+        result.push "artist:\"#{ artist }\" album:\"#{ album }\""
+      end
     end
   end
 

@@ -8,7 +8,7 @@
 <% @catalogs.each do |catalog| %>
   <div class="box icon">
     <%= link_to "/catalogs/#{ catalog.name }" do %>
-      <%= image_tag "#{ catalog.image }_300x300.jpg", size: "300" %>
+      <%= image_tag "#{ catalog.image }_300x300.jpg", size: "300", title: catalog.title %>
     <% end %>
   </div>
 <% end %>

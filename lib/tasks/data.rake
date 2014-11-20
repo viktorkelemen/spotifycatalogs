@@ -307,6 +307,27 @@ def fetch_inverted_audio(page)
   fetch(result, 'inverted_audio')
 end
 
+def fetch_the_quietus
+
+  result = []
+  (1..3).each do |page|
+    url = "http://thequietus.com/reviews?page=#{ page }"
+    doc = Nokogiri::HTML(open(url))
+
+    doc.css('.review, .review_small').each do |review|
+      artist = review.css('h4').at_xpath('text()[1]')
+      album = review.css('.sub')
+      if artist && album
+        artist = artist.text.strip
+        album = album.text.strip
+        result.push "artist:\"#{ artist }\" album:\"#{ album }\""
+      end
+    end
+  end
+
+  fetch(result, 'the_quietus')
+end
+
 
 def login
   # Kill main thread if any other thread dies.
@@ -422,6 +443,11 @@ namespace :data do
   task xlr8r: :environment do
     login
     fetch_xlr8r
+  end
+
+  task thequietus: :environment do
+    login
+    fetch_the_quietus
   end
 
 end

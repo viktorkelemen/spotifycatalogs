@@ -1,6 +1,6 @@
 == Spotira
 
-http://spotira.co.uk
+http://spotira.com
 
 Spotify music catalogs based on album reviews by
 * textura.org
@@ -9,3 +9,8 @@ Spotify music catalogs based on album reviews by
 * 雨と休日 ameto.biz
 * raster noton
 * fact magazin
+* ambientexotica
+* igloomag
+* xlr8r
+* the quietus
+* inverted audio

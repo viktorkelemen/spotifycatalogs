@@ -179,12 +179,12 @@ def fetch_xlr8r
   result = []
 
   (0..3).each do |page|
-    url = "http://www.xlr8r.com/reviews/recent?page=#{ page }"
+    url = "http://www.xlr8r.com/reviews/page/#{ page }"
     doc = Nokogiri::HTML(open(url))
 
-    doc.css('#reviews_page .posts-list .post .title a').each do |post|
+    doc.css('.vw-post-box-post-title a').each do |post|
       artist = post.at_xpath('text()[1]')
-      album = post.at_xpath('em')
+      album = post.at_xpath('i')
       if artist && album
         artist = artist.text.sub(/:\s*$/,'').strip
         album = album.text.strip

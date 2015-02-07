@@ -127,9 +127,9 @@ def fetch_experimedia_new
 
     doc.css('#newProductsDefault table td.main strong').each do |line|
       artist, album = line.text.gsub(/\(.*?\)/, "").split(' - ')
-      album = album.strip
-      artist = artist.strip
       if artist && album
+        album = album.strip
+        artist = artist.strip
         result.push "artist:\"#{ artist }\" album:\"#{ album }\""
       end
     end

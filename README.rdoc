@@ -14,3 +14,4 @@ Spotify music catalogs based on album reviews by
 * xlr8r
 * the quietus
 * inverted audio
+* exclaim.ca

@@ -328,6 +328,22 @@ def fetch_the_quietus
   fetch(result, 'the_quietus')
 end
 
+def fetch_exclaim
+  result = []
+  url = "http://exclaim.ca/music/reviews/album_improv-avant-garde_dance-electronic"
+  doc = Nokogiri::HTML(open(url))
+  doc.css('.streamSingle-item').each do |review|
+    artist = review.css('.streamSingle-item-title')
+    album = review.css('.streamSingle-item-details')
+    if artist && album
+      artist = artist.text.strip
+      album = album.text.strip
+      result.push "artist:\"#{ artist }\" album:\"#{ album }\""
+    end
+  end
+
+  fetch(result, 'exclaim')
+end
 
 def login
   # Kill main thread if any other thread dies.
@@ -448,6 +464,11 @@ namespace :data do
   task thequietus: :environment do
     login
     fetch_the_quietus
+  end
+
+  task exclaim: :environment do
+    login
+    fetch_exclaim
   end
 
 end

@@ -336,8 +336,6 @@ def fetch_exclaim
     artist = review.css('.streamSingle-item-title')
     album = review.css('.streamSingle-item-details')
     if artist && album
-      artist = artist.text.strip
-      album = album.text.strip
       result.add(
         artist.text.strip,
         album.text.strip,

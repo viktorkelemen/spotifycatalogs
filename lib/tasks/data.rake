@@ -329,7 +329,7 @@ def fetch_the_quietus
 end
 
 def fetch_exclaim
-  result = []
+  result = ResultList.new
   url = "http://exclaim.ca/music/reviews/album_improv-avant-garde_dance-electronic"
   doc = Nokogiri::HTML(open(url))
   doc.css('.streamSingle-item').each do |review|
@@ -338,11 +338,24 @@ def fetch_exclaim
     if artist && album
       artist = artist.text.strip
       album = album.text.strip
-      result.push "artist:\"#{ artist }\" album:\"#{ album }\""
+      result.add(
+        artist.text.strip,
+        album.text.strip,
+      )
     end
   end
+  fetch(result.query, 'exclaim')
+end
 
-  fetch(result, 'exclaim')
+class ResultList
+  attr_reader :query
+  def initialize
+    @query = []
+  end
+
+  def add(artist, album)
+    @query.push "artist:\"#{ artist }\" album:\"#{ album }\""
+  end
 end
 
 def login
@@ -467,7 +480,7 @@ namespace :data do
   end
 
   task exclaim: :environment do
-    login
+    #login
     fetch_exclaim
   end
 

@@ -82,21 +82,20 @@ def fetch_textura
 end
 
 def fetch_textura_top
-  url = 'http://textura.org/reviews/2013top10s.htm'
+  result = ResultList.new
+  url = 'http://textura.org/reviews/2015top10s.htm'
   doc = Nokogiri::HTML(open(url))
-  result = []
-
-  doc.css('p.bodytext a[href*="../archives"]').each do |link|
+  doc.css('p.bodytext strong').each do |link|
     artist = link.at_xpath('text()[1]')
     album = link.at_xpath('em')
     if artist && album
-      artist = artist.text.sub(/:\s*$/,'').strip
-      album = album.text.strip
-      result.push "artist:\"#{ artist }\" album:\"#{ album }\""
+      result.add(
+        artist = artist.text.sub(/:\s*$/,'').strip,
+        album = album.text.strip,
+      )
     end
   end
-
-  fetch(result, 'textura_top')
+  fetch(result.query, 'textura_top')
 end
 
 

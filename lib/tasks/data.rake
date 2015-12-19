@@ -90,15 +90,31 @@ def fetch_textura_top
     album = link.at_xpath('em')
     if artist && album
       result.add(
-        artist = artist.text.sub(/:\s*$/,'').strip,
-        album = album.text.strip,
+        artist.text.sub(/:\s*$/,'').strip,
+        album.text.strip,
       )
     end
   end
   fetch(result.query, 'textura_top')
 end
 
+def fetch_ghostly
+  result = ResultList.new
+  url = 'http://ghostly.com/releases'
+  doc = Nokogiri::HTML(open(url))
+  doc.css('.artist-releases').each do |link|
+    artist = link.css('.artist')
+    album = link.css('.title')
+    if artist && album
+      result.add(
+        artist.text.strip,
+        album.text.strip,
+      )
+    end
+  end
 
+  fetch(result.query, 'ghostly')
+end
 
 def fetch_experimedia_featured
   url = 'http://experimedia.net/index.php?main_page=featured_products'
@@ -419,6 +435,11 @@ namespace :data do
   task textura_top: :environment do
     login
     fetch_textura_top
+  end
+
+  task ghostly: :environment do
+    login
+    fetch_ghostly
   end
 
   task experimedia_featured: :environment do

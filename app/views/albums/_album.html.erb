@@ -1,0 +1,10 @@
+<div class="album box">
+  <%= link_to album.spotify_url, class: 'album_container' do %>
+    <div class="info">
+      <div class="title"><%= album.title %></div>
+      <div class="artist"><%= album.artist %></div>
+    </div>
+    <%= image_tag(album.image || "default_album.png", size: "320", class: "album_cover") %>
+    <%= image_tag("play.png", width: "258", height: "258", class: "play_button") %>
+  <% end %>
+</div>

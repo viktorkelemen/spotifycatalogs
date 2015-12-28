@@ -1,5 +1,7 @@
 SpoturaWeb::Application.routes.draw do
 
+  get 'albums/index'
+
   get 'catalogs/:name', to: 'catalogs#show'
 
   root 'catalogs#index'

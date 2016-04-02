@@ -45,7 +45,7 @@ def fetch(result, catalog_name)
 end
 
 def fetch_ra(date)
-  url = "http://www.residentadvisor.net/reviews.aspx?format=album&yr=#{ date.year }&mn=#{ date.month }"
+  url = "https://www.residentadvisor.net/reviews.aspx?format=album&yr=#{ date.year }&mn=#{ date.month }"
 
   doc = Nokogiri::HTML(open(url))
 

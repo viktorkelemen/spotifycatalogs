@@ -5,39 +5,6 @@ require 'open-uri'
 require 'mojinizer'
 require_relative 'spotira_utils.rb'
 
-
-def fetch(result, catalog_name)
-
-  catalog = Catalog.find_by_name(catalog_name)
-  unless catalog
-    catalog = Catalog.new({ name: catalog_name })
-    catalog.save!
-  end
-
-  result.each do |query|
-    search = Hallon::Search.new(query)
-
-    puts query
-    search.load
-
-    album = search.albums.first
-    params = {}
-    if album
-      params = {
-        spotify_url: album.to_str,
-        title: album.name,
-        artist: album.artist.name,
-        image: SpotiraUtils.get_thumbnail(album)
-      }
-
-      unless Album.exists?({ title: params[:title], artist: params[:artist] })
-        catalog.albums.create(params)
-        puts params
-      end
-    end
-  end
-end
-
 def fetch_ra(date)
   url = "https://www.residentadvisor.net/reviews.aspx?format=album&yr=#{ date.year }&mn=#{ date.month }"
 
@@ -53,7 +20,7 @@ def fetch_ra(date)
     end
   end
 
-  fetch(result, 'residentadvisor')
+  SpotiraUtils.fetch(result, 'residentadvisor')
 end
 
 
@@ -75,23 +42,6 @@ def fetch_textura
   SpotiraUtils.fetch(result, 'textura')
 end
 
-def fetch_textura_top
-  result = ResultList.new
-  url = 'http://textura.org/reviews/2015top10s.htm'
-  doc = Nokogiri::HTML(open(url))
-  doc.css('p.bodytext strong').each do |link|
-    artist = link.at_xpath('text()[1]')
-    album = link.at_xpath('em')
-    if artist && album
-      result.add(
-        artist.text.sub(/:\s*$/,'').strip,
-        album.text.strip,
-      )
-    end
-  end
-  fetch(result.query, 'textura_top')
-end
-
 def fetch_ghostly
   result = ResultList.new
   url = 'http://ghostly.com/releases'
@@ -107,7 +57,7 @@ def fetch_ghostly
     end
   end
 
-  fetch(result.query, 'ghostly')
+  SpotiraUtils.fetch(result.query, 'ghostly')
 end
 
 def fetch_experimedia_featured
@@ -124,7 +74,7 @@ def fetch_experimedia_featured
     end
   end
 
-  fetch(result, 'experimedia_featured')
+  SpotiraUtils.fetch(result, 'experimedia_featured')
 end
 
 def fetch_experimedia_new
@@ -144,7 +94,7 @@ def fetch_experimedia_new
     end
   end
 
-  fetch(result, 'experimedia_new')
+  SpotiraUtils.fetch(result, 'experimedia_new')
 end
 
 def fetch_igloo
@@ -162,7 +112,7 @@ def fetch_igloo
     end
   end
 
-  fetch(result, 'igloomag')
+  SpotiraUtils.fetch(result, 'igloomag')
 end
 
 def fetch_ambientexotica
@@ -180,7 +130,7 @@ def fetch_ambientexotica
     end
   end
 
-  fetch(result, 'ambientexotica')
+  SpotiraUtils.fetch(result, 'ambientexotica')
 end
 
 def fetch_xlr8r
@@ -202,7 +152,7 @@ def fetch_xlr8r
     end
   end
 
-  fetch(result, 'xlr8r')
+  SpotiraUtils.fetch(result, 'xlr8r')
 end
 
 
@@ -234,7 +184,7 @@ def fetch_ameto
   result += get_ameto('http://shop.ameto.biz/?mode=cate&cbid=511546&csid=0&sort=n')
   result += get_ameto('http://shop.ameto.biz/?mode=cate&cbid=511549&csid=0&sort=n')
 
-  fetch(result, 'ameto_day')
+  SpotiraUtils.fetch(result, 'ameto_day')
 end
 
 def fetch_discogs_goa
@@ -276,7 +226,7 @@ def fetch_raster_noton
     end
   end
 
-  fetch(result, 'rasternoton')
+  SpotiraUtils.fetch(result, 'rasternoton')
 end
 
 def fetch_fact_best_albums_2013
@@ -295,7 +245,7 @@ def fetch_fact_best_albums_2013
     end
   end
 
-  fetch(result, 'fact_best_albums_2013')
+  SpotiraUtils.fetch(result, 'fact_best_albums_2013')
 end
 
 def fetch_inverted_audio(page)
@@ -313,7 +263,7 @@ def fetch_inverted_audio(page)
     end
   end
 
-  fetch(result, 'inverted_audio')
+  SpotiraUtils.fetch(result, 'inverted_audio')
 end
 
 def fetch_the_quietus
@@ -334,7 +284,7 @@ def fetch_the_quietus
     end
   end
 
-  fetch(result, 'the_quietus')
+  SpotiraUtils.fetch(result, 'the_quietus')
 end
 
 def fetch_exclaim
@@ -351,7 +301,7 @@ def fetch_exclaim
       )
     end
   end
-  fetch(result.query, 'exclaim')
+  SpotiraUtils.fetch(result.query, 'exclaim')
 end
 
 def get_ambientblog_net_links
@@ -443,11 +393,6 @@ namespace :data do
   task textura: :environment do
     login
     fetch_textura
-  end
-
-  task textura_top: :environment do
-    login
-    fetch_textura_top
   end
 
   task ghostly: :environment do

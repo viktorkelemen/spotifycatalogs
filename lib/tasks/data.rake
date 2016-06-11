@@ -3,6 +3,7 @@ require 'pry'
 require 'nokogiri'
 require 'open-uri'
 require 'mojinizer'
+require_relative 'spotira_utils.rb'
 
 
 def fetch(result, catalog_name)
@@ -22,18 +23,11 @@ def fetch(result, catalog_name)
     album = search.albums.first
     params = {}
     if album
-      begin
-        json = JSON.parse(open("https://embed.spotify.com/oembed/?url=#{ album.to_str }", "User-Agent" => "Ruby/#{RUBY_VERSION}").read)
-        thumbnail = json["thumbnail_url"].sub('/cover/','/300/')
-      rescue
-        thumbnail = ''
-      end
-
       params = {
         spotify_url: album.to_str,
         title: album.name,
         artist: album.artist.name,
-        image: thumbnail
+        image: get_thumbnail(album)
       }
 
       unless Album.exists?({ title: params[:title], artist: params[:artist] })
@@ -78,7 +72,7 @@ def fetch_textura
     end
   end
 
-  fetch(result, 'textura')
+  SpotiraUtils.fetch(result, 'textura')
 end
 
 def fetch_textura_top
@@ -193,7 +187,7 @@ def fetch_xlr8r
 
   result = []
 
-  (0..3).each do |page|
+  (1..4).each do |page|
     url = "http://www.xlr8r.com/reviews/page/#{ page }"
     doc = Nokogiri::HTML(open(url))
 
@@ -360,6 +354,25 @@ def fetch_exclaim
   fetch(result.query, 'exclaim')
 end
 
+def get_ambientblog_net_links
+  url = "http://www.ambientblog.net/blog/category/recommendations/"
+  doc = Nokogiri::HTML(open(url))
+  doc.css('.entry-title a').first(10).map { |link| link['href'] }
+end
+
+def fetch_ambientblog_net
+  # result = ResultList.new
+  get_ambientblog_net_links.each do |url|
+    doc = Nokogiri::HTML(open(url))
+    ids = doc.css('a[title~="Spotify"]').map do |link|
+      /album\/(\S+\Z)/.match(link['href']).captures.first
+    end
+    puts ids
+  end
+  # doc = Nokogiri::HTML(open(url))
+  # doc.css('.entry-title').first(10).each do |
+end
+
 class ResultList
   attr_reader :query
   def initialize
@@ -502,4 +515,7 @@ namespace :data do
     fetch_exclaim
   end
 
+  task ambientblog: :environment do
+    fetch_ambientblog_net
+  end
 end

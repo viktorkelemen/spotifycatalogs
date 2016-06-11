@@ -27,7 +27,7 @@ module SpotiraUtils
           spotify_url: album.to_str,
           title: album.name,
           artist: album.artist.name,
-          image: get_thumbnail(album)
+          image: self.get_thumbnail(album)
         }
 
         unless Album.exists?({ title: params[:title], artist: params[:artist] })
@@ -38,7 +38,7 @@ module SpotiraUtils
     end
   end
 
-  def get_thumbnail(album)
+  def self.get_thumbnail(album)
     begin
       json = JSON.parse(open("https://embed.spotify.com/oembed/?url=#{ album.to_str }", "User-Agent" => "Ruby/#{RUBY_VERSION}").read)
       json["thumbnail_url"].sub('/cover/','/300/')

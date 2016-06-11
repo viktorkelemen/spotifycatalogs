@@ -27,7 +27,7 @@ def fetch(result, catalog_name)
         spotify_url: album.to_str,
         title: album.name,
         artist: album.artist.name,
-        image: get_thumbnail(album)
+        image: SpotiraUtils.get_thumbnail(album)
       }
 
       unless Album.exists?({ title: params[:title], artist: params[:artist] })

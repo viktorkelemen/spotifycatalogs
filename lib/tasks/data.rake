@@ -188,7 +188,7 @@ def fetch_xlr8r
   result = []
 
   (1..4).each do |page|
-    url = "http://www.xlr8r.com/reviews/page/#{ page }"
+    url = "https://www.xlr8r.com/reviews/page/#{ page }/"
     doc = Nokogiri::HTML(open(url))
 
     doc.css('.vw-post-box-post-title a').each do |post|

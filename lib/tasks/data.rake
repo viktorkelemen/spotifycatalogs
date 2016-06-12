@@ -4,134 +4,13 @@ require 'nokogiri'
 require 'open-uri'
 require 'mojinizer'
 require_relative 'spotira_utils.rb'
-
-def fetch_ra(date)
-  url = "https://www.residentadvisor.net/reviews.aspx?format=album&yr=#{ date.year }&mn=#{ date.month }"
-
-  doc = Nokogiri::HTML(open(url))
-
-  result = []
-  doc.css('.reviewArchive article h1').each do |link|
-    artist, album = link.text.split(' - ')
-    if artist && album
-      artist = artist.strip
-      album = album.strip
-      result.push "artist:\"#{ artist }\" album:\"#{ album }\""
-    end
-  end
-
-  SpotiraUtils.fetch(result, 'residentadvisor')
-end
-
-
-def fetch_textura
-  url = 'http://textura.org/pages/reviews.htm'
-  doc = Nokogiri::HTML(open(url))
-  result = []
-
-  doc.xpath('//a[contains(@href,"../")]').each do |link|
-    artist = link.at_xpath('text()[1]')
-    album = link.at_xpath('em')
-    if artist && album
-      artist = artist.text.sub(/:\s*$/,'').strip
-      album = album.text.strip
-      result.push "artist:\"#{ artist }\" album:\"#{ album }\""
-    end
-  end
-
-  SpotiraUtils.fetch(result, 'textura')
-end
-
-def fetch_ghostly
-  result = ResultList.new
-  url = 'http://ghostly.com/releases'
-  doc = Nokogiri::HTML(open(url))
-  doc.css('.artist-releases').each do |link|
-    artist = link.css('.artist')
-    album = link.css('.title')
-    if artist && album
-      result.add(
-        artist.text.strip,
-        album.text.strip,
-      )
-    end
-  end
-
-  SpotiraUtils.fetch(result.query, 'ghostly')
-end
-
-def fetch_experimedia_featured
-  url = 'http://experimedia.net/index.php?main_page=featured_products'
-  doc = Nokogiri::HTML(open(url))
-  result = []
-
-  doc.css('#featuredDefault table td.main strong').each do |line|
-    artist, album = line.text.gsub(/\(.*?\)/, "").split(' - ')
-    album = album.strip
-    artist = artist.strip
-    if artist && album
-      result.push "artist:\"#{ artist }\" album:\"#{ album }\""
-    end
-  end
-
-  SpotiraUtils.fetch(result, 'experimedia_featured')
-end
-
-def fetch_experimedia_new
-  result = []
-
-  [1,2,3,4,5,6,7,8,9,10].each do |page|
-    url = "http://experimedia.net/index.php?main_page=products_new&disp_order=6&page=#{ page }"
-      doc = Nokogiri::HTML(open(url))
-
-    doc.css('#newProductsDefault table td.main strong').each do |line|
-      artist, album = line.text.gsub(/\(.*?\)/, "").split(' - ')
-      if artist && album
-        album = album.strip
-        artist = artist.strip
-        result.push "artist:\"#{ artist }\" album:\"#{ album }\""
-      end
-    end
-  end
-
-  SpotiraUtils.fetch(result, 'experimedia_new')
-end
-
-def fetch_igloo
-  url = "http://igloomag.com/category/reviews"
-
-  doc = Nokogiri::HTML(open(url))
-
-  result = []
-  doc.css('#content .post h2 a').each do |link|
-    artist, album = link.text.split(' :: ')
-    if artist && album
-      artist = artist.strip
-      album = album.gsub(/\([^)]+\)/, "").strip
-      result.push "artist:\"#{ artist }\" album:\"#{ album }\""
-    end
-  end
-
-  SpotiraUtils.fetch(result, 'igloomag')
-end
-
-def fetch_ambientexotica
-  url = "http://www.ambientexotica.com/ambient-reviews"
-
-  doc = Nokogiri::HTML(open(url))
-
-  result = []
-  doc.css('#content h4 a').each do |link|
-    artist, album = link.text.split(' – ')
-    if artist && album
-      artist = artist.strip
-      album = album.gsub(/\([^)]+\)/, "").gsub(/\A\p{Space}*|\p{Space}*\z/, '')
-      result.push "artist:\"#{ artist }\" album:\"#{ album }\""
-    end
-  end
-
-  SpotiraUtils.fetch(result, 'ambientexotica')
-end
+require_relative 'result_list.rb'
+require_relative 'fetchers/residentadvisor.rb'
+require_relative 'fetchers/ghostly.rb'
+require_relative 'fetchers/experimedia.rb'
+require_relative 'fetchers/igloo.rb'
+require_relative 'fetchers/ambientexotica.rb'
+require_relative 'fetchers/inverted_audio.rb'
 
 def fetch_xlr8r
 
@@ -248,24 +127,6 @@ def fetch_fact_best_albums_2013
   SpotiraUtils.fetch(result, 'fact_best_albums_2013')
 end
 
-def fetch_inverted_audio(page)
-  result = []
-
-  url = "http://inverted-audio.com/reviews"
-  doc = Nokogiri::HTML(open("#{ url }/page/#{ page }"))
-
-  doc.css('.the_content.post .ia-post-list-info').each do |link|
-    artist, album = link.text.split(': ')
-    if artist && album
-      artist = artist.sub(/:\s*$/,'').strip
-      album = album.strip
-      result.push "artist:\"#{ artist }\" album:\"#{ album }\""
-    end
-  end
-
-  SpotiraUtils.fetch(result, 'inverted_audio')
-end
-
 def fetch_the_quietus
 
   result = []
@@ -323,17 +184,6 @@ def fetch_ambientblog_net
   # doc.css('.entry-title').first(10).each do |
 end
 
-class ResultList
-  attr_reader :query
-  def initialize
-    @query = []
-  end
-
-  def add(artist, album)
-    @query.push "artist:\"#{ artist }\" album:\"#{ album }\""
-  end
-end
-
 def login
   # Kill main thread if any other thread dies.
   Thread.abort_on_exception = true
@@ -380,34 +230,26 @@ end
 
 namespace :data do
 
-  desc "Fetch RA latest reviews"
   task ra: :environment do
     login
-    year = ENV.fetch("YEAR")
-    month = ENV.fetch("MONTH")
-    if year && month
-      fetch_ra(Date.new(year.to_i,month.to_i))
-    end
-  end
-
-  task textura: :environment do
-    login
-    fetch_textura
+    year = ENV.fetch("YEAR", Date.today.year)
+    month = ENV.fetch("MONTH", Date.today.month)
+    SpotiraFetchers.fetch_residentadvisor(Date.new(year.to_i,month.to_i))
   end
 
   task ghostly: :environment do
     login
-    fetch_ghostly
+    SpotiraFetchers.fetch_ghostly
   end
 
   task experimedia_featured: :environment do
     login
-    fetch_experimedia_featured
+    SpotiraFetchers.fetch_experimedia_featured
   end
 
   task experimedia_new: :environment do
     login
-    fetch_experimedia_new
+    SpotiraFetchers.fetch_experimedia_new
   end
 
   task ameto: :environment do
@@ -431,18 +273,18 @@ namespace :data do
 
   task inverted_audio: :environment do
     login
-    page = ENV.fetch("PAGE")
-    fetch_inverted_audio(page || 1)
+    page = ENV.fetch("PAGE", 1)
+    SpotiraFetchers.fetch_inverted_audio(page)
   end
 
   task igloo: :environment do
     login
-    fetch_igloo
+    SpotiraFetchers.fetch_igloo
   end
 
   task ambientexotica: :environment do
     login
-    fetch_ambientexotica
+    SpotiraFetchers.fetch_ambientexotica
   end
 
   task xlr8r: :environment do

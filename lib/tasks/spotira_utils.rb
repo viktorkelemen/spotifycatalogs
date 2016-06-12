@@ -31,7 +31,7 @@ module SpotiraUtils
         }
 
         unless Album.exists?({ title: params[:title], artist: params[:artist] })
-          # catalog.albums.create(params)
+          catalog.albums.create(params)
           puts params
         end
       end

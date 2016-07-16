@@ -11,6 +11,7 @@ require_relative 'fetchers/experimedia.rb'
 require_relative 'fetchers/igloo.rb'
 require_relative 'fetchers/ambientexotica.rb'
 require_relative 'fetchers/inverted_audio.rb'
+require_relative 'fetchers/raster_noton.rb'
 
 def fetch_xlr8r
 
@@ -90,23 +91,6 @@ def fetch_discogs_goa
 
 end
 
-
-def fetch_raster_noton
-  url = 'http://www.raster-noton.net/releases.php'
-  doc = Nokogiri::HTML(open(url))
-  result = []
-
-  doc.css('h3 a').each do |link|
-    code, artist, album = link.content.split(' | ')
-    if artist && album
-      artist = artist.sub(/:\s*$/,'').strip
-      album = album.strip
-      result.push "artist:\"#{ artist }\" album:\"#{ album }\""
-    end
-  end
-
-  SpotiraUtils.fetch(result, 'rasternoton')
-end
 
 def fetch_fact_best_albums_2013
   url = "http://www.factmag.com/2013/12/09/the-50-best-albums-of-2013/"
@@ -263,7 +247,7 @@ namespace :data do
 
   task raster_noton: :environment do
     login
-    fetch_raster_noton
+    SpotiraFetchers.fetch_raster_noton
   end
 
   task best_albums_2013: :environment do

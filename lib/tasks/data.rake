@@ -13,6 +13,7 @@ require_relative 'fetchers/ambientexotica.rb'
 require_relative 'fetchers/inverted_audio.rb'
 require_relative 'fetchers/raster_noton.rb'
 require_relative 'fetchers/xlr8r.rb'
+require_relative 'fetchers/exclaim.rb'
 
 def get_ameto(url)
   doc = Nokogiri::HTML(open(url))
@@ -108,23 +109,6 @@ def fetch_the_quietus
   end
 
   SpotiraUtils.fetch(result, 'the_quietus')
-end
-
-def fetch_exclaim
-  result = ResultList.new
-  url = "http://exclaim.ca/music/reviews/album_improv-avant-garde_dance-electronic"
-  doc = Nokogiri::HTML(open(url))
-  doc.css('.streamSingle-item').each do |review|
-    artist = review.css('.streamSingle-item-title')
-    album = review.css('.streamSingle-item-details')
-    if artist && album
-      result.add(
-        artist.text.strip,
-        album.text.strip,
-      )
-    end
-  end
-  SpotiraUtils.fetch(result.query, 'exclaim')
 end
 
 def get_ambientblog_net_links
@@ -260,8 +244,8 @@ namespace :data do
   end
 
   task exclaim: :environment do
-    #login
-    fetch_exclaim
+    login
+    SpotiraFetchers.fetch_exclaim
   end
 
   task ambientblog: :environment do

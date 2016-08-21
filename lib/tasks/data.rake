@@ -12,29 +12,7 @@ require_relative 'fetchers/igloo.rb'
 require_relative 'fetchers/ambientexotica.rb'
 require_relative 'fetchers/inverted_audio.rb'
 require_relative 'fetchers/raster_noton.rb'
-
-def fetch_xlr8r
-
-  result = []
-
-  (1..4).each do |page|
-    url = "https://www.xlr8r.com/reviews/page/#{ page }/"
-    doc = Nokogiri::HTML(open(url))
-
-    doc.css('.vw-post-box-post-title a').each do |post|
-      artist = post.at_xpath('text()[1]')
-      album = post.at_xpath('i')
-      if artist && album
-        artist = artist.text.sub(/:\s*$/,'').strip
-        album = album.text.strip
-        result.push "artist:\"#{ artist }\" album:\"#{ album }\""
-      end
-    end
-  end
-
-  SpotiraUtils.fetch(result, 'xlr8r')
-end
-
+require_relative 'fetchers/xlr8r.rb'
 
 def get_ameto(url)
   doc = Nokogiri::HTML(open(url))
@@ -273,7 +251,7 @@ namespace :data do
 
   task xlr8r: :environment do
     login
-    fetch_xlr8r
+    SpotiraFetchers.fetch_xlr8r
   end
 
   task thequietus: :environment do

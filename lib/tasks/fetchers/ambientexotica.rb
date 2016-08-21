@@ -4,7 +4,7 @@ require_relative '../spotira_utils.rb'
 
 module SpotiraFetchers
 
-  def self.ambientexotica
+  def self.fetch_ambientexotica
     url = "http://www.ambientexotica.com/ambient-reviews"
     doc = Nokogiri::HTML(open(url))
     result = []

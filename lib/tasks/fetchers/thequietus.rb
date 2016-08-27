@@ -22,6 +22,6 @@ module SpotiraFetchers
       end
     end
 
-    SpotiraUtils.fetch(result, 'the_quietus')
+    SpotiraUtils.fetch(result.query, 'the_quietus')
   end
 end

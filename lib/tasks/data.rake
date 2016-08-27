@@ -14,6 +14,7 @@ require_relative 'fetchers/inverted_audio.rb'
 require_relative 'fetchers/raster_noton.rb'
 require_relative 'fetchers/xlr8r.rb'
 require_relative 'fetchers/exclaim.rb'
+require_relative 'fetchers/thequietus.rb'
 
 def get_ameto(url)
   doc = Nokogiri::HTML(open(url))
@@ -88,27 +89,6 @@ def fetch_fact_best_albums_2013
   end
 
   SpotiraUtils.fetch(result, 'fact_best_albums_2013')
-end
-
-def fetch_the_quietus
-
-  result = []
-  (1..3).each do |page|
-    url = "http://thequietus.com/reviews?page=#{ page }"
-    doc = Nokogiri::HTML(open(url))
-
-    doc.css('.review, .review_small').each do |review|
-      artist = review.css('h4').at_xpath('text()[1]')
-      album = review.css('.sub')
-      if artist && album
-        artist = artist.text.strip
-        album = album.text.strip
-        result.push "artist:\"#{ artist }\" album:\"#{ album }\""
-      end
-    end
-  end
-
-  SpotiraUtils.fetch(result, 'the_quietus')
 end
 
 def get_ambientblog_net_links
@@ -240,7 +220,7 @@ namespace :data do
 
   task thequietus: :environment do
     login
-    fetch_the_quietus
+    SpotiraFetchers.fetch_the_quietus
   end
 
   task exclaim: :environment do

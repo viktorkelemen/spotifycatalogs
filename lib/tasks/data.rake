@@ -91,25 +91,6 @@ def fetch_fact_best_albums_2013
   SpotiraUtils.fetch(result, 'fact_best_albums_2013')
 end
 
-def get_ambientblog_net_links
-  url = "http://www.ambientblog.net/blog/category/recommendations/"
-  doc = Nokogiri::HTML(open(url))
-  doc.css('.entry-title a').first(10).map { |link| link['href'] }
-end
-
-def fetch_ambientblog_net
-  # result = ResultList.new
-  get_ambientblog_net_links.each do |url|
-    doc = Nokogiri::HTML(open(url))
-    ids = doc.css('a[title~="Spotify"]').map do |link|
-      /album\/(\S+\Z)/.match(link['href']).captures.first
-    end
-    puts ids
-  end
-  # doc = Nokogiri::HTML(open(url))
-  # doc.css('.entry-title').first(10).each do |
-end
-
 def login
   # Kill main thread if any other thread dies.
   Thread.abort_on_exception = true
@@ -226,9 +207,5 @@ namespace :data do
   task exclaim: :environment do
     login
     SpotiraFetchers.fetch_exclaim
-  end
-
-  task ambientblog: :environment do
-    fetch_ambientblog_net
   end
 end

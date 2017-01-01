@@ -107,15 +107,16 @@ def login
     ERROR
   end
 
-  hallon_username = ENV.fetch("SPOTIFY_USERNAME") { prompt("Please enter your spotify username") }
-  hallon_password = ENV.fetch("SPOTIFY_PASSWORD") { prompt("Please enter your spotify password", hide: true) }
-  hallon_appkey = IO.read(appkey_path)
-
+  hallon_username = ENV.fetch("SPOTIFY_USERNAME", "")
+  hallon_password = ENV.fetch("SPOTIFY_PASSWORD", "")
   if hallon_username.empty? or hallon_password.empty?
     abort <<-ERROR
       Sorry, you must supply both username and password for Hallon to be able to log in.
+      Set SPOTIFY_USERNAME and SPOTIFY_PASSWORD parameters.
     ERROR
   end
+
+  hallon_appkey = IO.read(appkey_path)
 
   session = Hallon::Session.initialize(hallon_appkey) do
     on(:connection_error) do |error|

@@ -17,11 +17,12 @@ module SpotiraFetchers
           album = album.gsub(/(?<=\[)[^\]]+?(?=\])/, "").gsub("[]","")
           album = album.strip
           puts "#{artist} - #{album}"
+          result.add(artist, album)
         end
       end
     end
 
-    SpotiraUtils.fetch(result, 'soundsofatiredcity')
+    SpotiraUtils.fetch(result.query, 'soundsofatiredcity')
   end
 
 end

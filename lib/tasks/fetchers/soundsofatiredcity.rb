@@ -16,7 +16,6 @@ module SpotiraFetchers
           artist = artist.strip
           album = album.gsub(/(?<=\[)[^\]]+?(?=\])/, "").gsub("[]","")
           album = album.strip
-          puts "#{artist} - #{album}"
           result.add(artist, album)
         end
       end

@@ -6,8 +6,8 @@ module SpotiraFetchers
 
   def self.fetch_soundsofatiredcity
     result = ResultList.new
-    (1..3).each do |page|
-      url = "http://soundsofatiredcity.com/best-of-2016-part-#{ page }"
+    ['part-1','part-2','part-3','part-4','final-part'].each do |page|
+      url = "http://soundsofatiredcity.com/best-of-2016-#{ page }"
       doc = Nokogiri::HTML(open(url))
       doc.css('.post_content h1 span').each do |link|
         artist, album = link.text.split(': ')

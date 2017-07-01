@@ -16,6 +16,7 @@ require_relative 'fetchers/xlr8r.rb'
 require_relative 'fetchers/exclaim.rb'
 require_relative 'fetchers/thequietus.rb'
 require_relative 'fetchers/soundsofatiredcity.rb'
+require_relative 'fetchers/textura.rb'
 
 def get_ameto(url)
   doc = Nokogiri::HTML(open(url))
@@ -215,4 +216,10 @@ namespace :data do
     login
     SpotiraFetchers.fetch_soundsofatiredcity
   end
+
+  task textura: :environment do
+    login
+    SpotiraFetchers.fetch_textura
+  end
+
 end
